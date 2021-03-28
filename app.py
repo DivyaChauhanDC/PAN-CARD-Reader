@@ -9,11 +9,11 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'PNG','JPEG','JPG'}
 
 app = Flask(__name__,template_folder='templates')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 3*1024 * 1024
 
 @app.route('/')
 def index():
-    return render_template('pan_card_uploader.html')
+    return render_template('index.html')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -25,11 +25,11 @@ def extract_pan_card_data():
         if request.method == 'POST':
             # check if there is a file in the request
             if 'pan_card_file' not in request.files:
-                return render_template('pan_card_uploader.html', msg='No file selected')
+                return render_template('index.html', msg='No file selected')
             file_data = request.files.get('pan_card_file')
             # if no file is selected
             if file_data.filename == '':
-                return render_template('pan_card_uploader.html', msg='No file selected')
+                return render_template('index.html', msg='No file selected')
 
             # check if the file has been uploaded
             if file_data.filename and allowed_file(file_data.filename):
@@ -38,8 +38,8 @@ def extract_pan_card_data():
                 file_data.save(file_name)
                 data = read_pan_card(file_name)
                 return render_template('pan_card_details.html',data=data)
-            return render_template('pan_card_uploader.html', msg="Please upload a valid file with extension png/jpg/jpeg!")
-        return render_template('pan_card_uploader.html',msg="Invalid Request")
+            return render_template('index.html', msg="Please upload a valid file with extension png/jpg/jpeg!")
+        return render_template('index.html',msg="Invalid Request")
     except Exception as ex:
         raise ex
 
